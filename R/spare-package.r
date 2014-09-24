@@ -2,7 +2,7 @@
 #' Client size load balancing
 #'
 #' @docType package
-#' @name spare-package
+#' @name spareserver-package
 NULL
 
 #' Create a spare server object

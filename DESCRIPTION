@@ -1,4 +1,4 @@
-Package: spare
+Package: spareserver
 Title: Client side load balancing
 Version: 1.0.0
 Authors@R: "Gabor Csardi <csardi.gabor@gmail.com> [aut, cre]"
@@ -6,5 +6,5 @@ Description: Client size load balancing. Decide which server to connect to,
     based on previous response times, and configuration.
 License: MIT + file LICENSE
 LazyData: true
-URL: https://github.com/metacran/spare
-BugReports: https://github.com/metacran/spare/issues
+URL: https://github.com/metacran/spareserver
+BugReports: https://github.com/metacran/spareserver/issues
