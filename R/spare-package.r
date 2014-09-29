@@ -57,7 +57,7 @@ add_service <- function(name, ...) {
   if (name %in% names(spare_services)) {
     stop("Service already exists", call. = FALSE)
   }
-  if (any(! sapply(..., is, class2 = "spare_server"))) {
+  if (any(! sapply(list(...), is, class2 = "spare_server"))) {
     stop("Not a server object", call. = FALSE)
   }
 
@@ -138,15 +138,10 @@ spare_q <- function(service, url, fun, ...) {
   if (! service %in% names(spare_services)) {
     stop("Unknown service", call. = FALSE)
   }
-  servers <- spare_services[[services]]$servers
+  servers <- spare_services[[service]]$servers
   odds <- sapply(servers, "[[", "priority")
   robust_q(service, url, fun, list(...), servers, odds)
 }
-
-url_regex <- paste0("^(?<fproto>(?<proto>[a-z]+)://)?",     # protocol
-                    "(?<host>[a-z\\.]+)",                    # host
-                    "(?<fport>:(?<port>[0-9]+))?",           # port
-                    "(?<path>/.*)?")                         # rest
 
 ## Make a robust query. We can check the internet connection in
 ## general, but we cannot rely on that completely, because the
@@ -175,7 +170,7 @@ url_regex <- paste0("^(?<fproto>(?<proto>[a-z]+)://)?",     # protocol
 ## that were off? Just in case they came back in the meanwhile.
 
 robust_q <- function(service, url, fun, args, servers, odds) {
-  order <- order(odds)
+  order <- order(odds, decreasing = TRUE)
   servers <- servers[order]
   for (i in seq_along(servers)) {
     ## Unknown or expired?
@@ -188,6 +183,7 @@ robust_q <- function(service, url, fun, args, servers, odds) {
       if (!inherits(res, "try-error")) {
         servers[[i]]$state <- "on"
         servers[[i]]$timestamp <- now()
+        spare_services[[service]]$servers <<- servers
         return(res)
       } else {
         servers[[i]]$state <- "off"
@@ -195,6 +191,7 @@ robust_q <- function(service, url, fun, args, servers, odds) {
       }
     }
   }
+  spare_services[[service]]$servers <<- servers
   stop("Cannot do query '", url, "'.")
 }
 
@@ -207,11 +204,11 @@ ping_server <- function(server) {
   parsed_url <- parse_url(server$base_url)
   protocol <- parsed_url$scheme
   host <- parsed_url$hostname
-  port <- as.numeric(parsed_url$port)
+  port <- parsed_url$port
 
   if (protocol == "") { protocol <- "http" }
-  if (is.na(port) && proto == "http") { port <- 80 }
-  if (is.na(port) && proto == "https") { port <- 443 }
+  if (is.null(port) && protocol == "http") { port <- 80 }
+  if (is.null(port) && protocol == "https") { port <- 443 }
 
   resp_time <- ping_port(host, port = port, count = 1,
                          timeout = server$timeout)
@@ -222,9 +219,11 @@ ping_server <- function(server) {
 
 ## Try to make a query
 
+#' @importFrom httr timeout
+
 try_server <- function(server, url, fun, args) {
   full_url <- paste0(server$base_url, url)
-  all_args <- c(list(full_url, timeout = server$timeout), args)
+  all_args <- c(list(full_url, httr::timeout(server$timeout)), args)
   try(silent = TRUE, do.call(fun, all_args))
 }
 
