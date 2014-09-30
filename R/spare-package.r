@@ -25,6 +25,8 @@ spare_services <- list()
 #' @param priority Non-negative initial odds of using this server, it has
 #'   no units. Note that a server with zero odds can be used if all other
 #'   servers are down.
+#' @param timeout Timeout in seconds. After this time, we give up on
+#'   the server.
 #' @return A spare server object
 #'
 #' @export

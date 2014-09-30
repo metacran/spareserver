@@ -9,5 +9,8 @@ LazyData: true
 URL: https://github.com/metacran/spareserver
 BugReports: https://github.com/metacran/spareserver/issues
 Imports:
-    assertthat
-Suggests: testthat
+    assertthat,
+    pingr,
+    httr
+Suggests:
+    testthat

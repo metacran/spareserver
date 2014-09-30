@@ -11,6 +11,9 @@ server(base_url, priority = 1, timeout = 1)
 \item{priority}{Non-negative initial odds of using this server, it has
 no units. Note that a server with zero odds can be used if all other
 servers are down.}
+
+\item{timeout}{Timeout in seconds. After this time, we give up on
+the server.}
 }
 \value{
 A spare server object
