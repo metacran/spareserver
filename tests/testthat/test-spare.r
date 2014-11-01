@@ -1,5 +1,5 @@
 
-context("Dedundant services")
+context("Redundant services")
 
 my_services <- get("spare_services", envir = asNamespace("spareserver"))
 on.exit(assign("spare_services", my_services,
@@ -24,7 +24,7 @@ test_that("Can remove services", {
 
 })
 
-context("Dedundant queries")
+context("Redundant queries")
 
 test_that("First server is used if available", {
   assign("spare_services", list(), envir = asNamespace("spareserver"))
