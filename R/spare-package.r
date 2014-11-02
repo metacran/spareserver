@@ -31,7 +31,7 @@ spare_services <- list()
 #'
 #' @export
 
-server <- function(base_url, priority = 1, timeout = 5) {
+server <- function(base_url, priority = 1, timeout = 1) {
   structure(
     list(
       base_url = base_url,
@@ -168,20 +168,22 @@ spare_q <- function(service, url, fun, ...) {
 ## * Otherwise set its state to 'off' with the current timestamp,
 ##   and continue with the next server.
 ##
-## Maybe do a second round of all servers, considering the ones
-## that were off? Just in case they came back in the meanwhile.
+## If all servers are down, then we start over, with fives times bigger
+## timeout. We only do two rounds currently.
 
-robust_q <- function(service, url, fun, args, servers, odds) {
+robust_q <- function(service, url, fun, args, servers, odds,
+                     timeout_multiplier = 1.0, no_rounds = 2) {
   order <- order(odds, decreasing = TRUE)
   servers <- servers[order]
   for (i in seq_along(servers)) {
     ## Unknown or expired?
     if (servers[[i]]$state == "unknown" ||
         now() - servers[[i]]$timestamp > as.difftime(3, units = "mins")) {
-      servers[[i]] <- ping_server(servers[[i]])
+      servers[[i]] <- ping_server(servers[[i]], mult = timeout_multiplier)
     }
     if (servers[[i]]$state == "on") {
-      res <- try_server(servers[[i]], url, fun, args)
+      res <- try_server(servers[[i]], url, fun, args,
+                        mult = timeout_multiplier)
       if (!inherits(res, "try-error")) {
         servers[[i]]$state <- "on"
         servers[[i]]$timestamp <- now()
@@ -194,7 +196,13 @@ robust_q <- function(service, url, fun, args, servers, odds) {
     }
   }
   spare_services[[service]]$servers <<- servers
-  stop("Cannot do query '", url, "'.")
+  if (no_rounds == 1) {
+    stop("Cannot do query '", url, "'.")
+  } else {
+    robust_q(service, url, fun, args, servers, odds,
+             timeout_multiplier = timeout_multiplier * 5,
+             no_rounds = no_rounds - 1)
+  }
 }
 
 ## Check if it is up
@@ -202,7 +210,7 @@ robust_q <- function(service, url, fun, args, servers, odds) {
 #' @importFrom pingr ping_port
 #' @importFrom httr parse_url
 
-ping_server <- function(server) {
+ping_server <- function(server, mult) {
   parsed_url <- parse_url(server$base_url)
   protocol <- parsed_url$scheme
   host <- parsed_url$hostname
@@ -213,7 +221,7 @@ ping_server <- function(server) {
   if (is.null(port) && protocol == "https") { port <- 443 }
 
   resp_time <- ping_port(host, port = port, count = 1,
-                         timeout = server$timeout)
+                         timeout = server$timeout * mult)
   server$state <- if (is.na(resp_time)) "off" else "on"
   server$timestamp <- now()
   server
@@ -223,9 +231,9 @@ ping_server <- function(server) {
 
 #' @importFrom httr timeout
 
-try_server <- function(server, url, fun, args) {
+try_server <- function(server, url, fun, args, mult) {
   full_url <- paste0(server$base_url, url)
-  all_args <- c(list(full_url, httr::timeout(server$timeout)), args)
+  all_args <- c(list(full_url, httr::timeout(server$timeout * mult)), args)
   try(silent = TRUE, do.call(fun, all_args))
 }
 
