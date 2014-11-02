@@ -31,7 +31,7 @@ spare_services <- list()
 #'
 #' @export
 
-server <- function(base_url, priority = 1, timeout = 1) {
+server <- function(base_url, priority = 1, timeout = 5) {
   structure(
     list(
       base_url = base_url,
