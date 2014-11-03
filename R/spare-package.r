@@ -97,7 +97,7 @@ remove_service <- function(name) {
     stop("Unknown service", call. = FALSE)
   }
 
-  rm(name, envir = spare_services)
+  rm(list = name, envir = spare_services)
 
   invisible()
 }
