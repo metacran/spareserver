@@ -1,6 +1,7 @@
 
 #' Client size load balancing
 #'
+#' @importFrom methods .selectSuperClasses
 #' @docType package
 #' @name spareserver-package
 NULL
