@@ -2,3 +2,5 @@
 ^tags$
 ^.travis.yml$
 ^appveyor.yml$
+^Makefile$
+^README.Rmd$

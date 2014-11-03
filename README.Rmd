@@ -1,5 +1,10 @@
 
-
+```{r, setup, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  tidy = FALSE,
+  error = FALSE)
+```
 
 # HTTP with backup server(s)
 
@@ -15,8 +20,7 @@ package. Suggestions for improvements are welcome.
 
 ## Installation
 
-
-```r
+```{r eval = FALSE}
 library(devtools)
 install_github("metacran/spareserver")
 ```
@@ -27,16 +31,8 @@ You can define services, and will use multiple servers.
 Each server has a default priority, and the servers are
 tried in the order of decreasing priority.
 
-
-```r
+```{r}
 library(spareserver)
-```
-
-```
-#> Loading required package: methods
-```
-
-```r
 add_service("cran-packages",
   server("http://cran.r-project.org/web/packages", priority = 10),
   server("http://cran.rstudio.com/web/packages", priority = 5)
@@ -45,71 +41,24 @@ add_service("cran-packages",
 
 Then you can make a robust query. Here we use the `httr` package.
 
-
-```r
+```{r}
 library(httr)
 spare_q("cran-packages", "/ggplot2/index.html", GET)
-```
-
-```
-#> Response [http://cran.r-project.org/web/packages/ggplot2/index.html]
-#>   Date: 2014-11-03 17:08
-#>   Status: 200
-#>   Content-type: text/html
-#>   Size: 21.1 kB
-#> <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3....
-#> <html xmlns="http://www.w3.org/1999/xhtml">
-#> <head>
-#> <title>CRAN - Package ggplot2</title>
-#> <link rel="stylesheet" type="text/css" href="../../CRAN_web.css" />
-#> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-#> <style type="text/css">
-#>   table td { vertical-align: top; }
-#> </style>
-#> </head>
-#> ...
-```
-
-```r
 remove_service("cran-packages")
 ```
 
 In the next example, the first server is unreachable,
 so we will use the fallback server.
 
-
-```r
+```{r}
 add_service("cran-packages",
   server("http://192.0.2.1/foobar", priority = 10),
   server("http://cran.rstudio.com/web/packages", priority = 5)
 )
 ```
 
-
-```r
+```{r}
 spare_q("cran-packages", "/ggplot2/index.html", GET)
-```
-
-```
-#> Response [http://cran.rstudio.com/web/packages/ggplot2/index.html]
-#>   Date: 2014-11-03 17:08
-#>   Status: 200
-#>   Content-type: text/html
-#>   Size: 21.1 kB
-#> <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3....
-#> <html xmlns="http://www.w3.org/1999/xhtml">
-#> <head>
-#> <title>CRAN - Package ggplot2</title>
-#> <link rel="stylesheet" type="text/css" href="../../CRAN_web.css" />
-#> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-#> <style type="text/css">
-#>   table td { vertical-align: top; }
-#> </style>
-#> </head>
-#> ...
-```
-
-```r
 remove_service("cran-packages")
 ```
 
