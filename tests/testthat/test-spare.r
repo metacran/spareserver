@@ -7,7 +7,7 @@ on.exit(assign("spare_services", my_services,
 
 
 test_that("Can create services", {
-  assign("spare_services", list(), envir = asNamespace("spareserver"))
+  clean_services()
   s1 <- server("http://server1.com", priority = 10)
   s2 <- server("http://server2.com", priority = 1)
   add_service("service1", s1, s2)
@@ -15,19 +15,19 @@ test_that("Can create services", {
 })
 
 test_that("Can add servers", {
-  assign("spare_services", list(), envir = asNamespace("spareserver"))
+  clean_services()
 
 })
 
 test_that("Can remove services", {
-  assign("spare_services", list(), envir = asNamespace("spareserver"))
+  clean_services()
 
 })
 
 context("Redundant queries")
 
 test_that("First server is used if available", {
-  assign("spare_services", list(), envir = asNamespace("spareserver"))
+  clean_services()
 
   s1 <- server("http://google.com:80/", priority = 10)
   s2 <- server("http://192.0.2.1/foobar/", priority = 5)
@@ -39,7 +39,7 @@ test_that("First server is used if available", {
 })
 
 test_that("Second server is used if first is not available", {
-  assign("spare_services", list(), envir = asNamespace("spareserver"))
+  clean_services()
 
   s1 <- server("http://google.com:80/", priority = 10)
   s2 <- server("http://192.0.2.1/foobar/", priority = 20)

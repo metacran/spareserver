@@ -5,7 +5,11 @@
 #' @name spareserver-package
 NULL
 
-spare_services <- list()
+spare_services <- new.env()
+
+clean_services <- function() {
+  rm(list = ls(spare_services), envir = spare_services)
+}
 
 .onLoad <- function(libname, pkgname) {
   ub <- unlockBinding
@@ -56,14 +60,14 @@ server <- function(base_url, priority = 1, timeout = 1) {
 
 add_service <- function(name, ...) {
   assert_that(is.string(name))
-  if (name %in% names(spare_services)) {
+  if (name %in% ls(spare_services)) {
     stop("Service already exists", call. = FALSE)
   }
   if (any(! sapply(list(...), is, class2 = "spare_server"))) {
     stop("Not a server object", call. = FALSE)
   }
 
-  spare_services[[name]] <<- list(servers = list(...))
+  assign(name, list(servers = list(...)), envir = spare_services)
 
   invisible(name)
 }
@@ -75,7 +79,7 @@ add_service <- function(name, ...) {
 #' @export
 
 services <- function() {
-  spare_services
+  as.list(spare_services)
 }
 
 #' Remove a redundant service
@@ -88,11 +92,11 @@ services <- function() {
 
 remove_service <- function(name) {
   assert_that(is.string(name))
-  if (! services %in% names(spare_services)) {
+  if (! name %in% ls(spare_services)) {
     stop("Unknown service", call. = FALSE)
   }
 
-  spare_services[[name]] <- NULL
+  rm(name, envir = spare_services)
 
   invisible()
 }
@@ -109,7 +113,7 @@ remove_service <- function(name) {
 
 add_server <- function(service, ...) {
   assert_that(is.string(service))
-  if (! service %in% names(spare_services)) {
+  if (! service %in% ls(spare_services)) {
     stop("Unknown service", call. = FALSE)
   }
   if (any(! (sapply(..., is, class2 = "spare_server")) |
@@ -117,8 +121,9 @@ add_server <- function(service, ...) {
     stop("Not a server object or NULL", call. = FALSE)
   }
 
-  spare_services[[service]]$servers <-
-    modifyList(spare_services[[service]]$servers, list(...))
+  new_servers <- modifyList(get(service, envir = spare_services),
+                            list(...))
+  assign(service, new_servers, envir = spare_services)
 
   invisible(service)
 }
@@ -137,10 +142,10 @@ add_server <- function(service, ...) {
 
 spare_q <- function(service, url, fun, ...) {
   assert_that(is.string(service))
-  if (! service %in% names(spare_services)) {
+  if (! service %in% ls(spare_services)) {
     stop("Unknown service", call. = FALSE)
   }
-  servers <- spare_services[[service]]$servers
+  servers <- get(service, envir = spare_services)$servers
   odds <- sapply(servers, "[[", "priority")
   robust_q(service, url, fun, list(...), servers, odds)
 }
@@ -187,7 +192,9 @@ robust_q <- function(service, url, fun, args, servers, odds,
       if (!inherits(res, "try-error")) {
         servers[[i]]$state <- "on"
         servers[[i]]$timestamp <- now()
-        spare_services[[service]]$servers <<- servers
+        obj <- get(service, spare_services)
+        obj$servers <- servers
+        assign(service, obj, envir = spare_services)
         return(res)
       } else {
         servers[[i]]$state <- "off"
@@ -195,7 +202,9 @@ robust_q <- function(service, url, fun, args, servers, odds,
       }
     }
   }
-  spare_services[[service]]$servers <<- servers
+  obj <- get(service, spare_services)
+  obj$servers <- servers
+  assign(service, obj, envir = spare_services)
   if (no_rounds == 1) {
     stop("Cannot do query '", url, "'.")
   } else {
