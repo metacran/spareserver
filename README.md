@@ -3,8 +3,9 @@
 
 # HTTP with backup server(s)
 
-[![Linux Build Status](https://travis-ci.org/metacran/spareserver.png?branch=master)](https://travis-ci.org/metacran/spareserver)
-[![Windows Build status](https://ci.appveyor.com/api/projects/status/github/metacran/spareserver)](https://ci.appveyor.com/project/gaborcsardi/spareserver)
+[![Linux Build Status](https://travis-ci.org/metacran/spareserver.svg?branch=master)](https://travis-ci.org/metacran/spareserver)
+[![Windows Build status](https://ci.appveyor.com/api/projects/status/github/metacran/spareserver?svg=true)](https://ci.appveyor.com/project/gaborcsardi/spareserver)
+[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/spareserver)](http://cran.r-project.org/web/packages/spareserver/index.html)
 
 An extremely simple fallback algorithm, to query a backup HTTP server,
 if the first choice HTTP server is down.
@@ -53,20 +54,20 @@ spare_q("cran-packages", "/ggplot2/index.html", GET)
 
 ```
 #> Response [http://cran.r-project.org/web/packages/ggplot2/index.html]
-#>   Date: 2014-11-03 17:08
+#>   Date: 2015-04-23 15:10
 #>   Status: 200
-#>   Content-type: text/html
-#>   Size: 21.1 kB
+#>   Content-Type: text/html
+#>   Size: 25.8 kB
 #> <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3....
 #> <html xmlns="http://www.w3.org/1999/xhtml">
 #> <head>
 #> <title>CRAN - Package ggplot2</title>
 #> <link rel="stylesheet" type="text/css" href="../../CRAN_web.css" />
 #> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-#> <style type="text/css">
-#>   table td { vertical-align: top; }
-#> </style>
-#> </head>
+#> <meta name="citation_title" content="An Implementation of the Grammar of...
+#> <meta name="citation_author" content="Hadley Wickham" />
+#> <meta name="citation_author" content="Winston Chang" />
+#> <meta name="citation_publication_date" content="2015-03-17" />
 #> ...
 ```
 
@@ -92,20 +93,20 @@ spare_q("cran-packages", "/ggplot2/index.html", GET)
 
 ```
 #> Response [http://cran.rstudio.com/web/packages/ggplot2/index.html]
-#>   Date: 2014-11-03 17:08
+#>   Date: 2015-04-23 15:10
 #>   Status: 200
-#>   Content-type: text/html
-#>   Size: 21.1 kB
+#>   Content-Type: text/html
+#>   Size: 25.8 kB
 #> <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3....
 #> <html xmlns="http://www.w3.org/1999/xhtml">
 #> <head>
 #> <title>CRAN - Package ggplot2</title>
 #> <link rel="stylesheet" type="text/css" href="../../CRAN_web.css" />
 #> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-#> <style type="text/css">
-#>   table td { vertical-align: top; }
-#> </style>
-#> </head>
+#> <meta name="citation_title" content="An Implementation of the Grammar of...
+#> <meta name="citation_author" content="Hadley Wickham" />
+#> <meta name="citation_author" content="Winston Chang" />
+#> <meta name="citation_publication_date" content="2015-03-17" />
 #> ...
 ```
 

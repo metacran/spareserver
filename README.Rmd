@@ -8,8 +8,9 @@ knitr::opts_chunk$set(
 
 # HTTP with backup server(s)
 
-[![Linux Build Status](https://travis-ci.org/metacran/spareserver.png?branch=master)](https://travis-ci.org/metacran/spareserver)
-[![Windows Build status](https://ci.appveyor.com/api/projects/status/github/metacran/spareserver)](https://ci.appveyor.com/project/gaborcsardi/spareserver)
+[![Linux Build Status](https://travis-ci.org/metacran/spareserver.svg?branch=master)](https://travis-ci.org/metacran/spareserver)
+[![Windows Build status](https://ci.appveyor.com/api/projects/status/github/metacran/spareserver?svg=true)](https://ci.appveyor.com/project/gaborcsardi/spareserver)
+[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/spareserver)](http://cran.r-project.org/web/packages/spareserver/index.html)
 
 An extremely simple fallback algorithm, to query a backup HTTP server,
 if the first choice HTTP server is down.
