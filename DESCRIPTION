@@ -11,7 +11,8 @@ BugReports: https://github.com/metacran/spareserver/issues
 Imports:
     assertthat,
     pingr,
-    httr
+    httr,
+    utils
 Suggests:
     testthat
 Depends:

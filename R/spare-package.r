@@ -1,7 +1,6 @@
 
 #' Client size load balancing
 #'
-#' @importFrom methods .selectSuperClasses
 #' @docType package
 #' @name spareserver-package
 NULL
@@ -111,6 +110,8 @@ remove_service <- function(name) {
 #'
 #' @export
 #' @importFrom assertthat assert_that is.string
+#' @importFrom methods is
+#' @importFrom utils modifyList
 
 add_server <- function(service, ...) {
   assert_that(is.string(service))
