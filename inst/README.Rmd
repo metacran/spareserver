@@ -77,8 +77,9 @@ remove_service("cran-packages")
 * Otherwise set its state to 'off' with the current timestamp,
   and continue with the next server.
 
-If all servers are down, then we start over, with fives times bigger
-timeout. We only do two rounds currently.
+If all servers are down, then we start over, with fifty times bigger
+timeout. We only do two rounds currently, and the statuses are reset
+between rounds.
 
 ## License
 
