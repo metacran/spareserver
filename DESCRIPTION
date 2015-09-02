@@ -1,6 +1,6 @@
 Package: spareserver
 Title: Client Side Load Balancing
-Version: 1.0.1
+Version: 1.0.2
 Author: Gabor Csardi
 Maintainer: Gabor Csardi <csardi.gabor@gmail.com>
 Description: Decide which server to connect to,

@@ -1,4 +1,8 @@
 
+# 1.0.2
+
+* Fix imports from base packages.
+
 # 1.0.1
 
 First version with a NEWS file.
